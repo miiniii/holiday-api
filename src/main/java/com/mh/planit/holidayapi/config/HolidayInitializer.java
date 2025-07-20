@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class HolidayInitializer {
 
 
     @EventListener(ApplicationReadyEvent.class)
+    @Transactional
     public void initHolidayData() {
         // 1. 국가 목록 조회
         List<Country> countries = countryRepository.findAll();
