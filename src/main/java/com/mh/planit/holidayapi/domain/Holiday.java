@@ -6,11 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "holiday")
 public class Holiday {
 
     @Id
@@ -21,13 +24,21 @@ public class Holiday {
 
     private String localName;
 
-    private String date;
+    @Column(name = "holiday_date")
+    private LocalDate date;
+
+    @Column(name = "holiday_year")
+    private int year;
+
+    @Column(name = "holiday_month")
+    private int month;
+
+    @Column(name = "holiday_day")
+    private int day;
 
     private String type;
 
-    private int holidayYear;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_code")
+    @JoinColumn(name = "country_code", referencedColumnName = "code")
     private Country country;
 }
