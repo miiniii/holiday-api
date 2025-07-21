@@ -28,7 +28,6 @@ public class HolidayInitializer {
     private final CountryRepository countryRepository;
 
 
-    @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initHolidayData() {
         // 1. 국가 목록 조회
@@ -41,6 +40,8 @@ public class HolidayInitializer {
         // 3. HolidayService에 캐시 초기화
         holidayService.initCountryMap(countryMap);
 
+        int successCount = 0;
+
         // 4. 연도별 공휴일 적재
         for (Country country : countries) {
             for (int year = 2020; year <= 2025; year++) {
@@ -49,7 +50,8 @@ public class HolidayInitializer {
                 for (HolidayResponse response : holidays) {
                     try {
                         HolidayRequest request = HolidayRequest.of(response, country.getCode());
-                        holidayService.save(request);  // 저장
+                        holidayService.save(request);
+                        successCount++;
                     } catch (Exception e) {
                         log.error("저장 실패: {} - {}", response.getName(), e.getMessage());
                     }
@@ -57,7 +59,7 @@ public class HolidayInitializer {
             }
         }
 
-        log.info("Holiday 초기 데이터 적재 완료");
+        log.info("Holiday 초기 데이터 적재 완료 - 총 {}건 저장됨", successCount);
     }
 
 }

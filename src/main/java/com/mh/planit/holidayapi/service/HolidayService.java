@@ -3,14 +3,16 @@ package com.mh.planit.holidayapi.service;
 import com.mh.planit.holidayapi.domain.Country;
 import com.mh.planit.holidayapi.domain.Holiday;
 import com.mh.planit.holidayapi.dto.HolidayRequest;
+import com.mh.planit.holidayapi.dto.HolidaySearchCondition;
 import com.mh.planit.holidayapi.repository.HolidayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -48,14 +50,18 @@ public class HolidayService {
                 .localName(request.getLocalName())
                 .date(date)
                 .type(type)
-                .year(date.getYear())
-                .month(date.getMonthValue())
-                .day(date.getDayOfMonth())
+                .holidayYear(date.getYear())
+                .holidayMonth(date.getMonthValue())
+                .holidayday(date.getDayOfMonth())
                 .country(country)
                 .build();
 
 
         holidayRepository.save(holiday);
+    }
+
+    public Page<Holiday> searchHolidays(HolidaySearchCondition condition, Pageable pageable) {
+        return holidayRepository.search(condition, pageable);
     }
 
 }

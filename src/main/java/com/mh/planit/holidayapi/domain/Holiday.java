@@ -1,7 +1,10 @@
 package com.mh.planit.holidayapi.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -25,13 +28,13 @@ public class Holiday {
     private LocalDate date;
 
     @Column(name = "holiday_year")
-    private int year;
+    private int holidayYear;
 
     @Column(name = "holiday_month")
-    private int month;
+    private int holidayMonth;
 
     @Column(name = "holiday_day")
-    private int day;
+    private int holidayday;
 
     private String type;
 
