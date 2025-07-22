@@ -74,5 +74,6 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom {
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
     }
+
 }
 

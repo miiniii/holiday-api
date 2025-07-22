@@ -104,6 +104,9 @@ public class HolidayService {
         log.info("공휴일이 성공적으로 재동기화되었습니다. [{} - {}]", countryCode, year);
     }
 
-
+    @Transactional
+    public void deleteHolidays(String countryCode, int year) {
+        holidayRepository.deleteByCountry_CodeAndHolidayYear(countryCode, year);
+    }
 
 }

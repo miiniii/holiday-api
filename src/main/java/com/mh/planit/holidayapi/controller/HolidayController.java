@@ -48,5 +48,13 @@ public class HolidayController {
         return ResponseEntity.ok("공휴일이 성공적으로 재동기화되었습니다.");
     }
 
+    @DeleteMapping("/delete")
+    @Operation(summary = "공휴일 삭제", description = "특정 연도 및 국가의 공휴일 데이터를 삭제합니다.")
+    public ResponseEntity<String> deleteHolidays(
+            @RequestParam String countryCode,
+            @RequestParam int year) {
+        holidayService.deleteHolidays(countryCode, year);
+        return ResponseEntity.ok("공휴일이 성공적으로 삭제되었습니다. [" + countryCode + " - " + year + "]");
+    }
 
 }

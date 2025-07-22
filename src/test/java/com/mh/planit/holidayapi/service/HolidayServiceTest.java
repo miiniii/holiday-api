@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,8 +44,16 @@ class HolidayServiceTest {
                 .build();
 
         List<Holiday> holidays = List.of(
-                Holiday.builder().name("Test Day 1").country(country).build(),
-                Holiday.builder().name("Test Day 2").country(country).build()
+                Holiday.builder()
+                        .name("Test Day 1")
+                        .country(country)
+                        .date(LocalDate.of(2025, 1, 1))
+                        .build(),
+                Holiday.builder()
+                        .name("Test Day 2")
+                        .country(country)
+                        .date(LocalDate.of(2025, 12, 25))
+                        .build()
         );
 
         // mocking
@@ -65,4 +74,19 @@ class HolidayServiceTest {
             assertEquals(country, holiday.getCountry());
         }
     }
+
+    @Test
+    void deleteHolidays_shouldDeleteByCountryCodeAndYear() {
+        // given
+        String countryCode = "KR";
+        int year = 2025;
+
+        // when
+        holidayService.deleteHolidays(countryCode, year);
+
+        // then
+        verify(holidayRepository).deleteByCountry_CodeAndHolidayYear(countryCode, year);
+    }
+
+
 }
