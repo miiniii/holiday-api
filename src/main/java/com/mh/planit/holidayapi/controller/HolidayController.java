@@ -40,5 +40,13 @@ public class HolidayController {
         return holidayService.searchHolidays(condition, pageable);
     }
 
+    @PutMapping("/refresh")
+    @Operation(summary = "공휴일 재동기화", description = "특정 연도와 국가 코드 기준으로 외부 API를 통해 공휴일을 다시 불러와 DB에 반영합니다.")
+    public ResponseEntity<String> refreshHolidays(@RequestParam String countryCode,
+                                                  @RequestParam int year) {
+        holidayService.refreshHolidays(countryCode, year);
+        return ResponseEntity.ok("공휴일이 성공적으로 재동기화되었습니다.");
+    }
+
 
 }

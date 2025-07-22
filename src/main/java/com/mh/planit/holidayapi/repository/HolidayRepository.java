@@ -4,4 +4,8 @@ import com.mh.planit.holidayapi.domain.Holiday;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface HolidayRepository extends JpaRepository<Holiday, Long>, HolidayRepositoryCustom {
+
+    // 국가 코드와 연도 기준 삭제
+    void deleteByCountry_CodeAndHolidayYear(String countryCode, int holidayYear);
+
 }

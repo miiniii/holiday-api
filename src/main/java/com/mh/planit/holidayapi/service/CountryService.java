@@ -26,4 +26,9 @@ public class CountryService {
                     ));
         }
     }
+
+    public Country getByCode(String code) {
+        return countryRepository.findByCode(code)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 국가 코드입니다: " + code));
+    }
 }

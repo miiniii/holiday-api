@@ -1,5 +1,6 @@
 package com.mh.planit.holidayapi.client;
 
+import com.mh.planit.holidayapi.domain.Holiday;
 import com.mh.planit.holidayapi.dto.HolidayResponse;
 //import lombok.RequiredArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,20 @@ public class HolidayApiClient {
             log.error("공휴일 API 호출 실패: {}", e.getMessage(), e);
             return Collections.emptyList();
         }
+
+    }
+
+    public List<Holiday> fetchHolidays(String countryCode, int year) {
+        log.info("Fetching holidays from external API: countryCode={}, year={}", countryCode, year);
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v3/PublicHolidays/{year}/{countryCode}")
+                        .build(year, countryCode))
+                .retrieve()
+                .bodyToFlux(Holiday.class) // 외부 API 응답이 Holiday 객체 배열이라 가정
+                .collectList()
+                .block(); // 동기 방식 호출 (실무에선 timeout 지정 권장)
     }
 
 }
