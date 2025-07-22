@@ -1,6 +1,7 @@
 package com.mh.planit.holidayapi.controller;
 
 
+import com.mh.planit.holidayapi.batch.HolidayBatchService;
 import com.mh.planit.holidayapi.config.CountriesInitializer;
 import com.mh.planit.holidayapi.config.HolidayInitializer;
 import com.mh.planit.holidayapi.domain.Holiday;
@@ -21,6 +22,7 @@ public class HolidayController {
     private final HolidayInitializer holidayInitializer;
     private final CountriesInitializer countriesInitializer;
     private final HolidayService holidayService;
+    private final HolidayBatchService holidayBatchService;
 
 
     // 공휴일 일괄 적재하는 API
@@ -55,6 +57,13 @@ public class HolidayController {
             @RequestParam int year) {
         holidayService.deleteHolidays(countryCode, year);
         return ResponseEntity.ok("공휴일이 성공적으로 삭제되었습니다. [" + countryCode + " - " + year + "]");
+    }
+
+
+    @PostMapping("/run")
+    public ResponseEntity<String> runBatch() {
+        holidayBatchService.refreshHolidayBatch();
+        return ResponseEntity.ok("배치 실행 완료");
     }
 
 }

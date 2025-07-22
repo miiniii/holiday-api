@@ -31,4 +31,8 @@ public class CountryService {
         return countryRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 국가 코드입니다: " + code));
     }
+
+    public List<Country> getAll() {
+        return countryRepository.findAll();
+    }
 }
