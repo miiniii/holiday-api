@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -39,4 +40,21 @@ public class Holiday {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_code", referencedColumnName = "code")
     private Country country;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Holiday holiday = (Holiday) object;
+        return Objects.equals(name, holiday.name)
+                && Objects.equals(localName, holiday.localName)
+                && Objects.equals(date, holiday.date)
+                && Objects.equals(type, holiday.type)
+                && Objects.equals(country.getCode(), holiday.country.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, localName, date, type, country.getCode());
+    }
 }

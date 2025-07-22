@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -71,21 +72,38 @@ public class HolidayService {
 
     @Transactional
     public void refreshHolidays(String countryCode, int year) {
-        // 1. 기존 데이터 삭제
-        holidayRepository.deleteByCountry_CodeAndHolidayYear(countryCode, year);
-
-        // 2. 외부 API에서 데이터 조회
+        // 1. 외부 API에서 공휴일 목록 조회
         List<Holiday> newHolidays = holidayApiClient.fetchHolidays(countryCode, year);
 
-        // 3. CountryService 통해 조회
+        // 2. Country 조회
         Country country = countryService.getByCode(countryCode);
 
-        // 4. Holiday 객체에 country 설정 후 저장
+        // 3. 기존 DB에서 해당 연도·국가의 공휴일 목록 조회
+        List<Holiday> existingHolidays = holidayRepository.findByCountry_CodeAndHolidayYear(countryCode, year);
+
+        // 4. Country 및 날짜 필드 설정
         for (Holiday holiday : newHolidays) {
-            holiday.setCountry(country);  // 연관관계 설정
+            holiday.setCountry(country);
+            LocalDate date = holiday.getDate();
+            holiday.setHolidayYear(date.getYear());
+            holiday.setHolidayMonth(date.getMonthValue());
+            holiday.setHolidayday(date.getDayOfMonth());
         }
+
+        // 5. 동일 여부 비교
+        boolean isSame = new HashSet<>(newHolidays).equals(new HashSet<>(existingHolidays));
+        if (isSame) {
+            log.info("변경 사항이 없어 저장을 건너뜁니다. [{} - {}]", countryCode, year);
+            return;
+        }
+
+        // 6. 기존 데이터 삭제 후 새 데이터 저장
+        holidayRepository.deleteByCountry_CodeAndHolidayYear(countryCode, year);
         holidayRepository.saveAll(newHolidays);
+
+        log.info("공휴일이 성공적으로 재동기화되었습니다. [{} - {}]", countryCode, year);
     }
+
 
 
 }
