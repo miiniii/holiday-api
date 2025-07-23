@@ -202,8 +202,6 @@ if (condition.getYear() != null) {
 ```
 
 
-
-
 ### 4-2. 자동 배치 실행
 - **스케줄**: `매년 1월 2일 오전 1시 (KST)`
 - **설명**: 전년도 및 금년도에 해당하는 공휴일 데이터를 자동으로 동기화합니다.
@@ -212,3 +210,48 @@ if (condition.getYear() != null) {
 [배치] 2025년도 공휴일 재동기화 시작 (국가: KR)
 [배치] 전년도·금년도 공휴일 재동기화 완료
 ```
+
+### 테스트 성공 스크린샷
+
+### Swagger UI 확인 방법
+접속 주소 : http://localhost:8080/swagger-ui/index.html
+<img width="1424" height="455" alt="image" src="https://github.com/user-attachments/assets/fb2fb4aa-354b-4878-bd04-d37f9774e9fb" />
+
+#### 1. 공휴일 일괄 적재
+- Try it out -> Execute
+
+#### 2. 공휴일 검색
+
+```json
+{
+  "countryCode": "KR",
+  "year": 2025,
+  "month": 5
+}
+
+{
+  "page": 0,
+  "size": 1,
+  "sort": [
+    "string"
+  ]
+}
+```
+- Try it out -> 파라미터 입력 -> Execute
+
+#### 3. 공휴일 삭제
+```
+countryCode : KR
+year : 2025
+```
+- Try it out -> 파라미터 입력 -> Execute
+
+#### 4. 공휴일 재동기화
+```
+countryCode : KR
+year : 2025
+```
+- Try it out -> 파라미터 입력 -> Execute
+
+#### 5. 공휴일 배치 수동 실행
+- Try it out -> Execute
