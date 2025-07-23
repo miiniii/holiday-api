@@ -98,6 +98,35 @@ public void initHolidayData() {
   "totalPages": 1
 }
 ```
+### QueryDSL 도입
+#### **문제 상황**
+- /holidays/search API에서 나라 코드, 연도, 월, 타입 등 다양한 조건으로 공휴일 검색이 필요
+- 기존 방식으로는 조건별로 매번 Repository 메서드와 Service 로직, controller를 따로 작성해야 했음
+```java
+List<Holiday> findByCountryCodeAndYear(String code, int year);
+List<Holiday> findByTypeAndMonth(String type, int month);
+...
+```
+- 조건이 많아질수록 코드가 지저분하고 중복되어 유지보수 어려움 발생
+
+#### **해결 방법**
+- QueryDSL을 도입해 조건을 조립식으로 처리
+- HolidayRepositoryCustom + HolidayRepositoryImpl 구현
+```java
+BooleanBuilder builder = new BooleanBuilder();
+if (condition.getCountryCode() != null) {
+    builder.and(holiday.country.code.eq(condition.getCountryCode()));
+}
+if (condition.getYear() != null) {
+    builder.and(holiday.holidayYear.eq(condition.getYear()));
+}
+...
+```
+
+#### **효과**
+- 동적 조건 쿼리를 하나의 메서드로 관리할 수 있어 유지보수가 쉬워짐
+- 코드량 감소 및 중복 제거
+
 
 ### 3. 공휴일 재동기화 (Refresh)
 
