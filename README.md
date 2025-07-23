@@ -129,7 +129,6 @@ if (condition.getYear() != null) {
 
 
 ### 3. 공휴일 재동기화 (Refresh)
-
 - **URL**: `/holidays/refresh`
 - **Method**: `PUT`
 - **설명**: 해당 국가와 연도에 대해 외부 API에서 공휴일 정보를 재조회하고, DB에 덮어쓰기(Upsert)합니다.
@@ -145,6 +144,34 @@ if (condition.getYear() != null) {
   ```json
   "공휴일이 성공적으로 재동기화되었습니다."
   ```
+### 공휴일 재동기화 시 중복 저장 방지 (equals & hashCode 활용)
+#### **문제 상황**
+- 외부 API에서 데이터를 받아올 때마다 모든 공휴일을 무조건 덮어쓰면 불필요한 DB 작업이 발생
+
+#### **해결 방법**
+- DB에 저장된 기존 데이터와 외부 API에서 받아온 데이터를 비교하여 "내용이 변경된 경우에만 저장" 되도록 처리
+- Holiday 도메인에 equals()와 hashCode()를 오버라이드하여 논리적으로 동일한 객체를 비교할 수 있도록 구현
+```java
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Holiday holiday = (Holiday) object;
+        return Objects.equals(name, holiday.name)
+                && Objects.equals(localName, holiday.localName)
+                && Objects.equals(date, holiday.date)
+                && Objects.equals(type, holiday.type)
+                && Objects.equals(country.getCode(), holiday.country.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, localName, date, type, country.getCode());
+    }
+```
+#### **효과**
+- 무의미한 DB 쓰기 작업 최소화
+
 
 ### 4. 공휴일 삭제
 
