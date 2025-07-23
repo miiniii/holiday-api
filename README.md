@@ -212,6 +212,9 @@ if (condition.getYear() != null) {
 ```
 
 ### 테스트 성공 스크린샷
+<img width="1316" height="232" alt="image" src="https://github.com/user-attachments/assets/d392aad0-f9a1-48aa-b77e-ef8c7636f1ac" />
+
+
 
 ### Swagger UI 확인 방법
 접속 주소 : http://localhost:8080/swagger-ui/index.html
