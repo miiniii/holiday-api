@@ -61,6 +61,7 @@ public class HolidayController {
 
 
     @PostMapping("/run")
+    @Operation(summary = "공휴일 배치 수동 실행", description = "전년도와 올해의 공휴일 데이터를 외부 API로부터 재동기화합니다.")
     public ResponseEntity<String> runBatch() {
         holidayBatchService.refreshHolidayBatch();
         return ResponseEntity.ok("배치 실행 완료");
