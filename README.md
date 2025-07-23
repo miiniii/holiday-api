@@ -36,6 +36,31 @@ cd holiday-api
 ```json
 "전체 초기화 완료"
 ```
+### N+1 문제 발생
+#### **문제 상황**
+- /holidays/init/data API를 통해 연도별 공휴일 데이터를 저장하는 과정에서 N+1 문제 발생
+- 콘솔에 select country where code = ? 쿼리가 반복적으로 출력됨
+```
+Hibernate: select null,c1_0.name from country c1_0 where c1_0.code=?
+Hibernate: insert into holiday (country_code,date,holiday_year,local_name,name,type,id) values (?,?,?,?,?,?,default)
+Hibernate: select c1_0.code,c1_0.name from country c1_0 where c1_0.code=?
+```
+#### **원인**
+- 국가 정보를 미리 캐싱한 Map<String, Country>에서 꺼내 사용했지만, 트랜잭션이 분리되어 있어 JPA 1차 캐시(Level 1 Cache)가 적용되지 않음
+- 결국 같은 국가임에도 매번 DB에서 SELECT 발생
+
+#### **해결 방법**
+- @Transactional 어노테이션을 HolidayInitializer 메서드에 추가
+```java
+@Transactional
+public void initHolidayData() {
+    ...
+}
+```
+- 트랜잭션 범위 안에서 JPA가 같은 식별자의 엔티티는 1차 캐시에서 재사용하게 되어 중복 쿼리 제거
+  
+#### **효과**
+- DB 쿼리 횟수 감소 -> 반복적인 SELECT 쿼리 제거 
 
 ### 2. 공휴일 조건 검색
 - **URL** `/holidays/init/`
@@ -119,6 +144,9 @@ cd holiday-api
 ```json
 "배치 실행 완료"
 ```
+
+
+
 
 ### 4-2. 자동 배치 실행
 - **스케줄**: `매년 1월 2일 오전 1시 (KST)`
